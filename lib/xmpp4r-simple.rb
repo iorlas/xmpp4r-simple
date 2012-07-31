@@ -438,12 +438,13 @@ module Jabber
       roster.add_presence_callback do |roster_item, old_presence, new_presence|
         simple_jid = roster_item.jid.strip.to_s
         presence = case new_presence.type
-                   when nil then new_presence.show || :online
-                   when :unavailable then :unavailable
-                   else
-                     nil
-                   end
-
+        when nil
+          new_presence.show || :online
+        when :unavailable
+          :unavailable
+        else
+          nil
+        end
         if presence && @presence_updates[simple_jid] != presence
           queue(:presence_updates) << simple_jid
           @presence_mutex.synchronize { @presence_updates[simple_jid] = [presence, new_presence.status] }
